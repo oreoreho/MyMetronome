@@ -1,0 +1,18 @@
+name: Build iOS IPA
+on: [push]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create Unsigned IPA
+        run: |
+          xcodebuild -project MyMetronome.xcodeproj -scheme MyMetronome -sdk iphoneos -configuration Release archive -archivePath MyMetronome.xcarchive CODE_SIGNING_ALLOWED=NO
+          mkdir -p Payload
+          cp -r MyMetronome.xcarchive/Products/Applications/*.app Payload/
+          zip -r MyMetronome.ipa Payload
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MyMetronome-App
+          path: MyMetronome.ipa
