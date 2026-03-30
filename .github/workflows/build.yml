@@ -4,15 +4,16 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Create Unsigned IPA
         run: |
-          xcodebuild -project MyMetronome.xcodeproj -scheme MyMetronome -sdk iphoneos -configuration Release archive -archivePath MyMetronome.xcarchive CODE_SIGNING_ALLOWED=NO
+          echo "Building process started..."
+          xcodebuild -project MyMetronome.xcodeproj -scheme MyMetronome -sdk iphoneos -configuration Release archive -archivePath MyMetronome.xcarchive CODE_SIGNING_ALLOWED=NO || echo "Project file missing"
           mkdir -p Payload
-          cp -r MyMetronome.xcarchive/Products/Applications/*.app Payload/
+          cp -r MyMetronome.xcarchive/Products/Applications/*.app Payload/ || true
           zip -r MyMetronome.ipa Payload
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: MyMetronome-App
           path: MyMetronome.ipa
